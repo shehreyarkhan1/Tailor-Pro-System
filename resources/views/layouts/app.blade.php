@@ -210,6 +210,12 @@
                             'icon' =>
                                 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h10a2 2 0 002-2v-2a2 2 0 00-2-2H9M7 21V9a2 2 0 012-2h2',
                         ],
+                        [
+                            'route' => 'users.index',
+                            'label' => 'Users',
+                            'icon' =>
+                                'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h10a2 2 0 002-2v-2a2 2 0 00-2-2H9M7 21V9a2 2 0 012-2h2',
+                        ],
                     ];
                 @endphp
 
@@ -336,7 +342,8 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-start gap-3 px-4 py-3.5">
                                 <div class="mt-0.5 shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                                    :class="toast.type === 'success' ? 'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)] toast-blink-success' :
+                                    :class="toast.type === 'success' ?
+                                        'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)] toast-blink-success' :
                                         'bg-[var(--color-terracotta)]/15 text-[var(--color-terracotta)] toast-blink-error'">
                                     <svg x-show="toast.type === 'success'" class="w-3 h-3" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -344,7 +351,8 @@
                                     </svg>
                                     <svg x-show="toast.type === 'error'" class="w-3 h-3" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </div>
 

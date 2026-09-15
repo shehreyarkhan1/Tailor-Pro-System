@@ -16,7 +16,7 @@ class AccessControlMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check()) {
-            return redirect()->route('login');
+            return redirect()->route('login')->with('error','First Login To Access The page ');
         }
 
         return $next($request);
