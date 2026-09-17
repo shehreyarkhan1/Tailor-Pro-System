@@ -39,16 +39,19 @@
                     <button type="submit"
                         class="px-5 py-2.5 rounded-lg bg-[var(--color-thread-teal)] text-white text-sm font-semibold hover:bg-[var(--color-thread-teal-dark)]">Update
                         Category</button>
-
                 </div>
             </form>
-            <form method="POST" action="{{ route('style-categories.destroy', $category) }}"
-                onsubmit="return confirm('Sure? Is category ke sath uske tamam options bhi delete ho jayenge.');">
-                @csrf @method('DELETE')
-                <button type="submit"
-                    class="px-5 py-2.5 rounded-lg border border-[var(--color-terracotta)]/30 text-[var(--color-terracotta)] text-sm font-medium hover:bg-[var(--color-terracotta)]/5">Delete
-                    Category</button>
-            </form>
+
+            <!-- Delete form: sibling hai, upar wale form ke andar nested NAHI hai -->
+            <div class="pt-1">
+                <form method="POST" action="{{ route('style-categories.destroy', $category) }}"
+                    onsubmit="return confirm('Sure? Is category ke sath uske tamam options bhi delete ho jayenge.');">
+                    @csrf @method('DELETE')
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-lg border border-[var(--color-terracotta)]/30 text-[var(--color-terracotta)] text-sm font-medium hover:bg-[var(--color-terracotta)]/5">Delete
+                        Category</button>
+                </form>
+            </div>
         </div>
 
         <!-- Options list -->
@@ -62,14 +65,17 @@
                     <div x-data="{ editing: false }" class="px-6 py-4">
                         <!-- Display row -->
                         <div x-show="!editing" class="flex items-center gap-4">
-                            <span
-                                class="relative w-9 h-9 rounded-full shrink-0 flex items-center justify-center ring-1 ring-black/5"
-                                style="background-color: {{ $option->swatch_color ?? '#E5E5E5' }}">
-                                @if ($option->icon_path)
-                                    <img src="{{ asset('storage/' . $option->icon_path) }}" class="w-5 h-5" alt=""
-                                        onerror="this.remove()">
-                                @endif
-                            </span>
+                            @if ($option->icon_path)
+                                <!-- Icon: square rounded box, object-contain se shape distort nahi hoti -->
+                                <span class="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center bg-[var(--color-cloth)] ring-1 ring-black/10 p-1.5 overflow-hidden">
+                                    <img src="{{ $option->iconUrl() }}" class="w-full h-full object-contain" alt="{{ $option->name }}" onerror="this.parentElement.remove()">
+                                </span>
+                            @else
+                                <!-- Icon nahi: color swatch circle fallback -->
+                                <span class="w-9 h-9 rounded-full shrink-0 ring-1 ring-black/10"
+                                    style="background-color: {{ $option->swatch_color ?? '#E5E5E5' }}"></span>
+                            @endif
+
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium">{{ $option->name }} <span
                                         class="text-black/30 font-mono text-xs">({{ $option->code }})</span></p>
@@ -86,8 +92,12 @@
                             @endif
                             <button @click="editing = true"
                                 class="text-xs font-medium text-[var(--color-thread-teal)] hover:underline">Edit</button>
+                        </div>
+
+                        <!-- Delete form: display row ke bahar, apna alag sibling form -->
+                        <div x-show="!editing" class="mt-1">
                             <form method="POST" action="{{ route('style-options.destroy', $option) }}"
-                                onsubmit="return confirm('Ye option delete karain?');">
+                                onsubmit="return confirm('Ye option delete karain?');" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit"
                                     class="text-xs font-medium text-[var(--color-terracotta)] hover:underline">Delete</button>
@@ -132,9 +142,12 @@
                                         @if ($option->icon_path)
                                             <div x-data="{ removed: false }">
                                                 <div x-show="!removed" class="flex items-center gap-2">
-                                                    <img src="{{ $option->iconUrl() }}"
-                                                        class="w-8 h-8 rounded ring-1 ring-black/10 bg-[var(--color-cloth)] p-1"
-                                                        alt="">
+                                                    <!-- Current icon preview: bada, square box, object-contain -->
+                                                    <span class="w-14 h-14 rounded-lg shrink-0 flex items-center justify-center bg-[var(--color-cloth)] ring-1 ring-black/10 p-2 overflow-hidden">
+                                                        <img src="{{ $option->iconUrl() }}"
+                                                            class="w-full h-full object-contain"
+                                                            alt="">
+                                                    </span>
                                                     <label
                                                         class="flex items-center gap-1.5 text-xs text-[var(--color-terracotta)] cursor-pointer">
                                                         <input type="checkbox" name="remove_icon" value="1"
@@ -177,7 +190,8 @@
             <!-- Add new option -->
             <div class="px-6 py-5 bg-[var(--color-cloth)] border-t border-black/5">
                 <p class="text-sm font-semibold mb-3">+ Naya Option Add Karain</p>
-                <form method="POST" action="{{ route('style-options.store', $category) }}" class="space-y-3">
+                <form method="POST" action="{{ route('style-options.store', $category) }}" class="space-y-3"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
                         <div class="col-span-2">
@@ -201,6 +215,14 @@
                                 class="w-full px-3 py-2 rounded-lg border border-black/10 text-sm font-mono">
                         </div>
                     </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-black/50 mb-1">Icon (optional)</label>
+                        <input type="file" name="icon" accept=".svg,.png,.jpg,.jpeg,.webp"
+                            class="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-[var(--color-thread-teal)]/10 file:text-[var(--color-thread-teal)] hover:file:bg-[var(--color-thread-teal)]/20">
+                        <p class="text-[11px] text-black/40 mt-1">SVG ya PNG, max 512KB.</p>
+                    </div>
+
                     <button type="submit"
                         class="px-4 py-2 rounded-lg bg-[var(--color-thread-gold)] text-white text-sm font-semibold hover:opacity-90">Add
                         Option</button>

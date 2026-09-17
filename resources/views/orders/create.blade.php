@@ -136,42 +136,44 @@
                 <div class="text-[var(--color-thread-teal)] stitch-line w-10"></div>
 
                 @foreach ($styleCategories as $category)
-                    @if ($category->activeOptions->isNotEmpty())
-                        <div>
-                            <label class="block text-sm font-medium mb-3">{{ $category->name }}</label>
-                            <div class="flex flex-wrap gap-3">
-                                @foreach ($category->activeOptions as $option)
-                                    <label class="cursor-pointer group">
-                                        <input type="radio" name="style_selections[{{ $category->id }}]"
-                                            value="{{ $option->id }}" class="sr-only peer"
-                                            {{ $loop->first ? 'checked' : '' }}>
-                                        <div
-                                            class="flex items-center gap-2.5 pl-2.5 pr-4 py-2 rounded-xl border-2 border-black/10 peer-checked:border-[var(--color-thread-teal)] peer-checked:bg-[var(--color-thread-teal)]/5 group-hover:border-black/25 transition-colors">
-                                            <!-- Icon if available, swatch color as fallback -->
-                                            <span
-                                                class="relative w-7 h-7 rounded-full shrink-0 flex items-center justify-center ring-1 ring-black/5"
-                                                style="background-color: {{ $option->swatch_color ?? '#E5E5E5' }}">
-                                                @if ($option->icon_path)
-                                                    <img src="{{ asset('storage/' . $option->icon_path) }}"
-                                                        class="w-4 h-4" alt="" onerror="this.remove()">
-                                                @endif
-                                            </span>
-                                            <span>
-                                                <span
-                                                    class="block text-sm font-medium leading-tight">{{ $option->name }}</span>
-                                                @if ($option->extra_price > 0)
-                                                    <span
-                                                        class="block text-xs text-[var(--color-thread-gold)] font-mono">+Rs.
-                                                        {{ number_format($option->extra_price) }}</span>
-                                                @endif
-                                            </span>
-                                        </div>
-                                    </label>
-                                @endforeach
-                            </div>
+    @if ($category->activeOptions->isNotEmpty())
+        <div>
+            <label class="block text-sm font-medium mb-3">{{ $category->name }}</label>
+            <div class="flex flex-wrap gap-3">
+                @foreach ($category->activeOptions as $option)
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="style_selections[{{ $category->id }}]"
+                            value="{{ $option->id }}" class="sr-only peer"
+                            {{ $loop->first ? 'checked' : '' }}>
+                        <div
+                            class="flex items-center gap-3 pl-3 pr-5 py-3 rounded-xl border-2 border-black/10 peer-checked:border-[var(--color-thread-teal)] peer-checked:bg-[var(--color-thread-teal)]/5 group-hover:border-black/25 transition-colors">
+
+                            @if ($option->icon_path)
+                                <!-- Icon: bada, square rounded box, object-contain se shape distort nahi hoti -->
+                                <span class="w-14 h-14 rounded-lg shrink-0 flex items-center justify-center bg-white ring-1 ring-black/10 p-2 overflow-hidden">
+                                    <img src="{{ asset('storage/' . $option->icon_path) }}"
+                                        class="w-full h-full object-contain" alt="{{ $option->name }}" onerror="this.parentElement.remove()">
+                                </span>
+                            @else
+                                <!-- Icon nahi hai: color swatch circle fallback -->
+                                <span class="w-9 h-9 rounded-full shrink-0 ring-1 ring-black/10"
+                                    style="background-color: {{ $option->swatch_color ?? '#E5E5E5' }}"></span>
+                            @endif
+
+                            <span>
+                                <span class="block text-sm font-medium leading-tight">{{ $option->name }}</span>
+                                @if ($option->extra_price > 0)
+                                    <span class="block text-xs text-[var(--color-thread-gold)] font-mono">+Rs.
+                                        {{ number_format($option->extra_price) }}</span>
+                                @endif
+                            </span>
                         </div>
-                    @endif
+                    </label>
                 @endforeach
+            </div>
+        </div>
+    @endif
+@endforeach
             </div>
 
             <div class="bg-white rounded-xl p-6 sm:p-8 shadow-sm ring-1 ring-black/5 space-y-5">
